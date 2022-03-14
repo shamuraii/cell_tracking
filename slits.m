@@ -3,11 +3,16 @@ clear
 clc
 close all
 
+%fname = 'D:\Research\Videos\20-2.avi';
+%outf = 'D:\Research\Videos\output\20-2\';
+fname = 'V4.avi';
+outf = '';
+
 %% Generate Slits
 
-vid = vision.VideoFileReader('V4.avi');
+vid = vision.VideoFileReader(fname);
 
-num_frames = 1000;
+num_frames = 501;
 slits_im = zeros(vid.info.VideoSize(2),num_frames);
 for i=1:num_frames
    
@@ -29,9 +34,11 @@ release(vid);
 slit_f = imgaussfilt(slits_im,3);
 s = mean(slit_f,2);
 s_front = slit_f - repmat(s,1,size(slit_f,2));
+%s_front = imgaussfilt(s_front,3);
 
 % Get binary image from threshold
-s_gray = mat2gray(s_front);
+%s_gray = mat2gray(s_front);
+s_gray = s_front;
 s_bw = imbinarize(s_gray);
 % Flip image if most pixels are white
 if (mean(s_bw(:)) > 0.5)
@@ -70,17 +77,17 @@ h = histogram(center_ints(:,1));
 h.BinWidth = 1;
 count_per_frame = h.Values;
 f = getframe(f3);
-imwrite(f.cdata,'output/cells_per_frame.png');
+imwrite(f.cdata,[outf, 'cells_per_frame.png']);
 
 % CELLS PER SECOND
 h.BinWidth = FPS;
 count_per_sec = h.Values;
 f = getframe(f3);
-imwrite(f.cdata,'output/cells_per_sec.png');
+imwrite(f.cdata,[outf, 'cells_per_sec.png']);
 
 % TOTAL CELLS PER SECOND
 h.Normalization = 'cumcount';
 cumcount_per_sec = h.Values;
 f = getframe(f3);
-imwrite(f.cdata,'output/total_per_sec.png');
+imwrite(f.cdata,[outf, 'total_per_sec.png']);
 
