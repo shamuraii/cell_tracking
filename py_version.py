@@ -2,10 +2,13 @@ import numpy as np
 import cv2
 import time
 
+SAFE_THRESH = 60
+MIN_THRESH = 25
+
 def main():
     #cap = cv2.VideoCapture('D:\\Research\\Videos\\20-2.avi')
     cap = cv2.VideoCapture('C:\\Users\\Jefferson\\OneDrive - University of Pittsburgh\\Pitt\\2021 Fall\\Research\\m_code\\cell_tracking\\V4.avi')
-    #cap.set(cv2.CAP_PROP_POS_FRAMES, 6000)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, 6000)
     if (cap.isOpened()== False):
       print("Error opening video stream or file")
       quit()
@@ -33,12 +36,15 @@ def main():
     norm_front = cv2.normalize(slit_front,  None, 0, 255, cv2.NORM_MINMAX)
 
     T, otsu = cv2.threshold(norm_front, 0, 255, cv2.THRESH_OTSU)
-    #cv2.imshow("OTSU", otsu)
+    print(T)
+    if (T < MIN_THRESH): T = SAFE_THRESH
+    thresh = cv2.inRange(norm_front, T, 255)
+    cv2.imshow("custom_thresh", thresh)
     print("--- %s seconds ---" % (time.time() - start_time))
 
     while True:
         kernel = np.ones((1,1),np.uint8)
-        opening = cv2.morphologyEx(otsu, cv2.MORPH_OPEN, kernel)
+        opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
 
         og_copy = slit_f.copy()
         cnts = cv2.findContours(opening, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -70,10 +76,6 @@ def main():
     #cap = cv2.VideoCapture('D:\\Research\\Videos\\20-2.avi')
     #if (cap.isOpened()== False):
         #print("Error opening video stream or file")
-
-
-    
-
 
 if __name__ == '__main__':
     main()
