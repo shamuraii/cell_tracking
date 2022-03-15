@@ -40,36 +40,26 @@ def main():
         slit = fgray[:,center]
         slits_im[:,i] = slit
     
-    #slit_f = cv2.GaussianBlur(slits_im, (5,5), 0)
     slit_f = cv2.fastNlMeansDenoising(slits_im,None,3,7,21)
     mean_col = np.mean(slit_f, axis=1)
     col_image = slit_f.copy()
     for i in range(numframes):
         col_image[:,i] = mean_col
 
-    #slit_front = cv2.absdiff(slits_im, col_image)
     slit_front = cv2.subtract(slit_f, col_image)
-    #norm_front = (255*(slit_front - np.min(slit_front))/np.ptp(slit_front))
     norm_front = cv2.normalize(slit_front,  None, 0, 255, cv2.NORM_MINMAX)
 
-    T, threshInv = cv2.threshold(norm_front, 0, 255, cv2.THRESH_OTSU)
-    cv2.imshow("OTSU", threshInv)
+    T, otsu = cv2.threshold(norm_front, 0, 255, cv2.THRESH_OTSU)
+    #cv2.imshow("OTSU", otsu)
     print("--- %s seconds ---" % (time.time() - start_time))
-
-    #(thresh, im_bw) = cv2.threshold(slit_f, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    #cv2.imshow("Slits_Image", slits_im)
-    #cv2.imshow("front", slit_front)
-    #print(slit_front)
-    #cv2.imshow('FRAME',fgray)
         
     setup_trackbars()
 
     while True:
         t_min, k_size = get_trackbar_values()
 
-        thresh = cv2.inRange(norm_front, t_min, 255)
         kernel = np.ones((k_size,k_size),np.uint8)
-        opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+        opening = cv2.morphologyEx(otsu, cv2.MORPH_OPEN, kernel)
 
         og_copy = slit_f.copy()
         cnts = cv2.findContours(opening, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -88,7 +78,7 @@ def main():
 
         cv2.imshow("Original", og_copy)
         cv2.imshow("Front", norm_front)
-        cv2.imshow("Thresh", thresh)
+        cv2.imshow("Thresh", otsu)
         cv2.imshow("Opening", opening)
 
         if cv2.waitKey(1) & 0xFF is ord('q'):
