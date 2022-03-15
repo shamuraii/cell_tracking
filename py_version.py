@@ -2,23 +2,6 @@ import numpy as np
 import cv2
 import time
 
-def callback(value):
-    pass
-
-def setup_trackbars():
-    cv2.namedWindow("Trackbars", 0)
-    cv2.createTrackbar("Threshold", "Trackbars", 0, 255, callback)
-    cv2.createTrackbar("Kernel_Size", "Trackbars", 0, 25, callback)
-
-def get_trackbar_values():
-    values = []
-
-    for i in ["Threshold", "Kernel_Size"]:
-        v = cv2.getTrackbarPos(i, "Trackbars")
-        values.append(v)
-
-    return values
-
 def main():
     #cap = cv2.VideoCapture('D:\\Research\\Videos\\20-2.avi')
     cap = cv2.VideoCapture('C:\\Users\\Jefferson\\OneDrive - University of Pittsburgh\\Pitt\\2021 Fall\\Research\\m_code\\cell_tracking\\V4.avi')
@@ -52,13 +35,9 @@ def main():
     T, otsu = cv2.threshold(norm_front, 0, 255, cv2.THRESH_OTSU)
     #cv2.imshow("OTSU", otsu)
     print("--- %s seconds ---" % (time.time() - start_time))
-        
-    setup_trackbars()
 
     while True:
-        t_min, k_size = get_trackbar_values()
-
-        kernel = np.ones((k_size,k_size),np.uint8)
+        kernel = np.ones((1,1),np.uint8)
         opening = cv2.morphologyEx(otsu, cv2.MORPH_OPEN, kernel)
 
         og_copy = slit_f.copy()
@@ -82,7 +61,6 @@ def main():
         cv2.imshow("Opening", opening)
 
         if cv2.waitKey(1) & 0xFF is ord('q'):
-            print("Chosen threshold: %s" % t_min)
             break
 
     cv2.destroyAllWindows()
