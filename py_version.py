@@ -12,7 +12,7 @@ import time
 
 # Parameters
 SAFE_THRESH = 60
-MIN_THRESH = 25
+MIN_THRESH = 35
 FRAMES_PER_SLIT = 4000
 
 # Globals
