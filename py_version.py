@@ -174,7 +174,7 @@ out_sec = Path(args["video"]).stem + "_sec"
 out_tot = Path(args["video"]).stem + "_tot"
 np.savetxt(out_raw + ".csv", raw_data, delimiter=",", fmt="%d")
 np.savetxt(out_sec + ".csv", sec_data, delimiter=",", fmt="%d")
-np.savetxt(out_tot + ".csv", sec_data, delimiter=",", fmt="%d")
+np.savetxt(out_tot + ".csv", tot_data, delimiter=",", fmt="%d")
 print("[INFO] Raw data saved to: %s" % (out_raw + ".csv"))
 print("[INFO] Per Second data saved to: %s" % (out_sec + ".csv"))
 print("[INFO] Cumulative Totals saved to: %s" % (out_tot + ".csv"))
