@@ -169,9 +169,11 @@ for i in range(int(total_sec)):
 print("[INFO] Total cells: %d" % total_cells)
 
 # Save Raw data and Sec data to csv files
-out_raw = Path(args["video"]).stem + "_raw"
-out_sec = Path(args["video"]).stem + "_sec"
-out_tot = Path(args["video"]).stem + "_tot"
+Path("./output").mkdir(exist_ok=True)
+
+out_raw = "./output/" + Path(args["video"]).stem + "_raw"
+out_sec = "./output/" + Path(args["video"]).stem + "_sec"
+out_tot = "./output/" + Path(args["video"]).stem + "_tot"
 np.savetxt(out_raw + ".csv", raw_data, delimiter=",", fmt="%d")
 np.savetxt(out_sec + ".csv", sec_data, delimiter=",", fmt="%d")
 np.savetxt(out_tot + ".csv", tot_data, delimiter=",", fmt="%d")
